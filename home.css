@@ -5,10 +5,9 @@ html{
 body {
     background: url("https://www.beautycolorcode.com/121921-2880x1800.png");
     background-size: cover;
-    padding-top: 10%;
+    padding-top: 2%;
     font-family: Lato;
     color: white;
-    text-align: center;
 }
 
 h1 {
@@ -30,21 +29,17 @@ hr{
 }
 
 #logo {
-    height: 20em;
+    height: 15em;
     width: auto;
+    top: 0px;
+    left: 0px;
+    margin-left: 35px;
+    padding: 0;
 }
 
-a:link
-{
-    color:#FFFFFF;
-}
-
-a:visited
-{
-    color:#FFFFFF;
-}
-
-a:hover 
-{
-    color:#FFFFFF;
+#name {
+    width: auto;
+    top: 0px;
+    right: 0px;
+    padding: 0;
 }
