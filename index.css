@@ -3,9 +3,8 @@ html {
 }
 
 body {
-    background: #181818;
+    background: #013b0eb0;
     background-size: cover;
-    padding-top: 2%;
     font-family: Lato;
     color: white;
     text-align: center;
@@ -34,6 +33,39 @@ hr {
     width: auto;
 }
 
+#nav-bar {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    padding-left: 5em;
+    padding-right: 5em;
+}
+
+#nav-bar-items {
+    display: inline;
+}
+
+#nav-bar-text {
+    color: white;
+    text-align: center;
+    text-decoration: none;
+    padding: 0.80em;
+    font-size: 1.1em;
+}
+
+#nav-bar-text:hover:not(.active) {
+    background-color: #58bd84
+}
+
+#game-card-title {
+    margin-bottom: 1em;
+    padding: 0.80em;
+}
+
+.active {
+    color: #6de3a0 !important;
+}
+
 a:link {
     color: #FFFFFF;
 }
@@ -44,4 +76,13 @@ a:visited {
 
 a:hover {
     color: #FFFFFF;
+}
+
+#featuredGameBanner {
+    margin-top: 1.5em;
+    background-color: #302e2e;
+    border-style: solid;
+    border-color: #000000;
+    border-radius: 1%;
+    border-width: 1px;
 }
