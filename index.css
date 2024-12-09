@@ -86,3 +86,9 @@ a:hover {
     border-radius: 1%;
     border-width: 1px;
 }
+
+.center {
+    display: inline-block;
+    position: relative;
+
+}
