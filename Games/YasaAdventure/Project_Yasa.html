@@ -6,7 +6,8 @@
 	<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0">
 	<title>Project_Yasa</title>
 	<style>
-		html, body {
+		html,
+		body {
 			width: 100%;
 			height: 100%;
 			margin: 0;
@@ -20,6 +21,7 @@
 			height: 100vh !important;
 			touch-action: none;
 		}
+
 
 		body {
 			color: white;
@@ -157,6 +159,7 @@
 			touch-action: none;
 			user-select: none;
 		}
+
 		#fullscreen-prompt {
 			position: fixed;
 			inset: 0;
@@ -172,8 +175,8 @@
 			font-size: 22px;
 			font-weight: bold;
 			color: white;
-			background: rgba(255,255,255,0.15);
-			border: 3px solid rgba(255,255,255,0.5);
+			background: rgba(255, 255, 255, 0.15);
+			border: 3px solid rgba(255, 255, 255, 0.5);
 			border-radius: 16px;
 			touch-action: none;
 			cursor: pointer;
@@ -196,6 +199,7 @@
 		</div>
 		<button id="btn-action">Action</button> <!-- keep any action buttons you need -->
 	</div>
+
 	<canvas id="canvas">
 		Your browser does not support the canvas tag.
 	</canvas>
@@ -212,7 +216,7 @@
 
 	<script src="Project_Yasa.js"></script>
 	<script>
-		const GODOT_CONFIG = { "args": [], "canvasResizePolicy": 2, "emscriptenPoolSize": 8, "ensureCrossOriginIsolationHeaders": true, "executable": "Project_Yasa", "experimentalVK": false, "fileSizes": { "Project_Yasa.pck": 39068, "Project_Yasa.wasm": 35740641 }, "focusCanvas": true, "gdextensionLibs": [], "godotPoolSize": 4 };
+		const GODOT_CONFIG = { "args": [], "canvasResizePolicy": 2, "emscriptenPoolSize": 8, "ensureCrossOriginIsolationHeaders": true, "executable": "Project_Yasa", "experimentalVK": false, "fileSizes": { "Project_Yasa.pck": 43568, "Project_Yasa.wasm": 35740641 }, "focusCanvas": true, "gdextensionLibs": [], "godotPoolSize": 4 };
 		const GODOT_THREADS_ENABLED = false;
 		const engine = new Engine(GODOT_CONFIG);
 
@@ -317,105 +321,106 @@
 		}());
 	</script>
 	<script>
-	// Mobile detection
-	const isMobile = /Android|iPhone|iPad/i.test(navigator.userAgent)
-		|| ('ontouchstart' in window)
-		|| new URLSearchParams(window.location.search).has('mobile');
+		// Mobile detection
+		const isMobile = /Android|iPhone|iPad/i.test(navigator.userAgent)
+			|| ('ontouchstart' in window)
+			|| new URLSearchParams(window.location.search).has('mobile');
 
-	if (isMobile) {
-		document.getElementById('mobile-controls').style.display = 'flex';
-	}
-
-	// Shared state Godot will poll
-	window.godotInputState = { x: 0, y: 0, action: false };
-
-	const base = document.getElementById('joystick-base');
-	const thumb = document.getElementById('joystick-thumb');
-	const maxDist = 35; // how far the thumb can move from center
-
-	let activeTouchId = null;
-	let baseRect = null;
-
-	base.addEventListener('touchstart', (e) => {
-		e.preventDefault();
-		if (activeTouchId !== null) return; // already tracking a touch
-		const touch = e.changedTouches[0];
-		activeTouchId = touch.identifier;
-		baseRect = base.getBoundingClientRect();
-	}, { passive: false });
-
-	base.addEventListener('touchmove', (e) => {
-		e.preventDefault();
-		// Find our tracked touch
-		const touch = [...e.changedTouches].find(t => t.identifier === activeTouchId);
-		if (!touch) return;
-
-		// Get position relative to center of base
-		const centerX = baseRect.left + baseRect.width / 2;
-		const centerY = baseRect.top + baseRect.height / 2;
-		let dx = touch.clientX - centerX;
-		let dy = touch.clientY - centerY;
-
-		// Clamp to max distance
-		const dist = Math.sqrt(dx * dx + dy * dy);
-		if (dist > maxDist) {
-			dx = (dx / dist) * maxDist;
-			dy = (dy / dist) * maxDist;
+		if (isMobile) {
+			document.getElementById('mobile-controls').style.display = 'flex';
 		}
 
-		// Move the thumb visually
-		thumb.style.transform = `translate(${dx}px, ${dy}px)`;
+		// Shared state Godot will poll
+		window.godotInputState = { x: 0, y: 0, action: false };
 
-		// Normalize to -1..1 and send to Godot
-		window.godotInputState.x = dx / maxDist;
-		window.godotInputState.y = dy / maxDist;
+		const base = document.getElementById('joystick-base');
+		const thumb = document.getElementById('joystick-thumb');
+		const maxDist = 35; // how far the thumb can move from center
 
-	}, { passive: false });
+		let activeTouchId = null;
+		let baseRect = null;
 
-	function resetJoystick() {
-		activeTouchId = null;
-		thumb.style.transform = 'translate(0px, 0px)';
-		window.godotInputState.x = 0;
-		window.godotInputState.y = 0;
-	}
+		base.addEventListener('touchstart', (e) => {
+			e.preventDefault();
+			if (activeTouchId !== null) return; // already tracking a touch
+			const touch = e.changedTouches[0];
+			activeTouchId = touch.identifier;
+			baseRect = base.getBoundingClientRect();
+		}, { passive: false });
 
-	base.addEventListener('touchend', (e) => { e.preventDefault(); resetJoystick(); }, { passive: false });
-	base.addEventListener('touchcancel', (e) => { e.preventDefault(); resetJoystick(); }, { passive: false });
+		base.addEventListener('touchmove', (e) => {
+			e.preventDefault();
+			// Find our tracked touch
+			const touch = [...e.changedTouches].find(t => t.identifier === activeTouchId);
+			if (!touch) return;
 
-	// Action button
-	const btnAction = document.getElementById('btn-action');
-	btnAction.addEventListener('touchstart', (e) => {
-		e.preventDefault();
-		window.godotInputState.action = true;
-	}, { passive: false });
-	btnAction.addEventListener('touchend', (e) => {
-		e.preventDefault();
-		window.godotInputState.action = false;
-	}, { passive: false });
+			// Get position relative to center of base
+			const centerX = baseRect.left + baseRect.width / 2;
+			const centerY = baseRect.top + baseRect.height / 2;
+			let dx = touch.clientX - centerX;
+			let dy = touch.clientY - centerY;
 
-	const prompt = document.getElementById('fullscreen-prompt');
-	const fsBtn  = document.getElementById('fullscreen-btn');
+			// Clamp to max distance
+			const dist = Math.sqrt(dx * dx + dy * dy);
+			if (dist > maxDist) {
+				dx = (dx / dist) * maxDist;
+				dy = (dy / dist) * maxDist;
+			}
 
-	fsBtn.addEventListener('click', () => {
-		// Request fullscreen
-		const el = document.documentElement;
-		if (el.requestFullscreen) {
-			el.requestFullscreen();
-		} else if (el.webkitRequestFullscreen) {
-			el.webkitRequestFullscreen(); // Safari
+			// Move the thumb visually
+			thumb.style.transform = `translate(${dx}px, ${dy}px)`;
+
+			// Normalize to -1..1 and send to Godot
+			window.godotInputState.x = dx / maxDist;
+			window.godotInputState.y = dy / maxDist;
+
+		}, { passive: false });
+
+		function resetJoystick() {
+			activeTouchId = null;
+			thumb.style.transform = 'translate(0px, 0px)';
+			window.godotInputState.x = 0;
+			window.godotInputState.y = 0;
 		}
 
-		// Hide the prompt
-		prompt.style.display = 'none';
-	});
+		base.addEventListener('touchend', (e) => { e.preventDefault(); resetJoystick(); }, { passive: false });
+		base.addEventListener('touchcancel', (e) => { e.preventDefault(); resetJoystick(); }, { passive: false });
 
-	// If they rotate or exit fullscreen, re-show prompt
-	document.addEventListener('fullscreenchange', () => {
-		if (!document.fullscreenElement) {
-			prompt.style.display = 'flex';
-		}
-	});
-</script>
+		// Action button
+		const btnAction = document.getElementById('btn-action');
+		btnAction.addEventListener('touchstart', (e) => {
+			e.preventDefault();
+			window.godotInputState.action = true;
+		}, { passive: false });
+		btnAction.addEventListener('touchend', (e) => {
+			e.preventDefault();
+			window.godotInputState.action = false;
+		}, { passive: false });
+
+		const prompt = document.getElementById('fullscreen-prompt');
+		const fsBtn = document.getElementById('fullscreen-btn');
+
+		fsBtn.addEventListener('click', () => {
+			// Request fullscreen
+			const el = document.documentElement;
+			if (el.requestFullscreen) {
+				el.requestFullscreen();
+			} else if (el.webkitRequestFullscreen) {
+				el.webkitRequestFullscreen(); // Safari
+			}
+
+			// Hide the prompt
+			prompt.style.display = 'none';
+		});
+
+		// If they rotate or exit fullscreen, re-show prompt
+		document.addEventListener('fullscreenchange', () => {
+			if (!document.fullscreenElement) {
+				prompt.style.display = 'flex';
+			}
+		});
+	</script>
+
 </body>
 
 </html>
